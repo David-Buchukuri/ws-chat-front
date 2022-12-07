@@ -14,7 +14,6 @@ rooms.forEach((room) => {
   element.innerHTML = room;
   element.addEventListener("click", (e) => {
     selectedRoom = room;
-    console.log(selectedRoom);
     roomName.innerHTML = selectedRoom + " chat room";
     ws.send(
       JSON.stringify({ action: "join", room: selectedRoom, clientId: clientId })
@@ -35,6 +34,10 @@ ws.onmessage = (e) => {
     clientId = data.value;
   }
 };
+
+window.addEventListener("beforeunload", () => {
+  ws.close();
+});
 
 button.addEventListener("click", (e) => {
   ws.send(
