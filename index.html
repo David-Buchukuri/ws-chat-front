@@ -1,44 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>web sockets</title>
-    <style>
-      .chat-box {
-        border: 1px solid black;
-        border-radius: 10px;
-        height: 200px;
-        width: 300px;
-        padding: 10px;
-        margin-bottom: 10px;
-        display: flex;
-        flex-direction: column;
-        overflow: auto;
-      }
-
-      h4 {
-        margin: 0;
-        padding: 0;
-      }
-      ul {
-        margin-bottom: 50px;
-        padding: 1;
-      }
-    </style>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vite App</title>
   </head>
   <body>
-    <h2>Web socket messages</h2>
-
-    <div class="rooms">
-      <h3 id="room-name">empty chat room</h3>
-      <h4>choose a room to join from bellow</h4>
-      <ul></ul>
-      <div class="chat-box"></div>
-    </div>
-    <input type="text" />
-    <button>send</button>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
   </body>
-  <script src="./script.js"></script>
 </html>
