@@ -17,7 +17,8 @@
 
 <script setup>
 import { state } from "../stores/wsStore";
-import { ref } from "vue";
+import { ref, onBeforeUnmount } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 
 const message = ref(null);
 const messages = ref([]);
@@ -39,6 +40,20 @@ state.ws.onmessage = (e) => {
     messages.value.push(data.value);
   }
 };
+
+onBeforeRouteLeave(() => {
+  const answer = window.confirm(
+    "Do you really want to leave? you have unsaved changes!"
+  );
+  if (!answer) return false;
+});
+
+onBeforeUnmount(() => {
+  state.ws.close();
+  state.ws = null;
+  state.roomId = null;
+  state.clientId = null;
+});
 </script>
 
 <style scoped>

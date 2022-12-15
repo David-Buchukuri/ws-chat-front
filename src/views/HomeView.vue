@@ -1,23 +1,26 @@
 <template>
   <main>
-    <div>
-      <h3>Create Your Own Chat Room</h3>
-      <button @click="createRoom">Create Chat Room</button>
-      <span v-if="roomIdFromResponse"
-        >chat room id: {{ roomIdFromResponse }}</span
-      >
-    </div>
-    <div>
-      <h3>Already Have A Code?</h3>
-      <h3>Join The Room!</h3>
-      <input
-        type="text"
-        placeholder="enter room id"
-        v-model="roomIdFromInput"
-      />
-      <span v-if="error" class="error">invalid room id</span>
-      <button @click="joinChat" :disabled="!roomIdFromInput">Join</button>
-    </div>
+    <h1>anonymous chat</h1>
+    <section>
+      <div>
+        <h3>Create Your Own Chat Room</h3>
+        <button @click="createRoom">Create Chat Room</button>
+        <span v-if="roomIdFromResponse"
+          >chat room id: {{ roomIdFromResponse }}</span
+        >
+      </div>
+      <div>
+        <h3>Already Have A Code?</h3>
+        <h3>Join The Room!</h3>
+        <input
+          type="text"
+          placeholder="enter room id"
+          v-model="roomIdFromInput"
+        />
+        <span v-if="error" class="error">invalid room id</span>
+        <button @click="joinChat" :disabled="!roomIdFromInput">Join</button>
+      </div>
+    </section>
   </main>
 </template>
 
@@ -53,12 +56,10 @@ const joinChat = () => {
     if (data.type == "clientId") {
       state.clientId = data.value;
       state.roomId = roomIdFromInput.value;
-      console.log(state);
+      state.ws = ws;
       router.push("/chat");
     }
   };
-
-  state.ws = ws;
 };
 </script>
 
@@ -86,12 +87,20 @@ button {
 span {
   font-style: italic;
 }
+section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 50px;
+}
+
 main {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 100vh;
-  gap: 50px;
+  gap: 200px;
+  height: 80vh;
 }
 </style>
