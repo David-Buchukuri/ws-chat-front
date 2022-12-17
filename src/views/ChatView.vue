@@ -57,7 +57,9 @@ state.ws.onmessage = (e) => {
   const data = JSON.parse(e.data);
   if (data.type == "message") {
     messages.value.push(data.value);
-    typingUser.value = false;
+    if (!data.isMine) {
+      typingUser.value = false;
+    }
   }
 
   if (data.type == "join") {
