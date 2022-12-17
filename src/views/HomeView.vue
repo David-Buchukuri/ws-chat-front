@@ -17,7 +17,9 @@
           placeholder="enter room id"
           v-model="roomIdFromInput"
         />
-        <span v-if="error" class="error">invalid room id</span>
+        <span v-if="error" class="error"
+          >room id is invalid or the room is full
+        </span>
         <button @click="joinChat" :disabled="!roomIdFromInput">Join</button>
       </div>
     </section>
@@ -47,12 +49,11 @@ const joinChat = () => {
   );
   ws.onerror = function (err) {
     error.value = true;
-    console.log(err.value);
   };
 
   ws.onmessage = (e) => {
     const data = JSON.parse(e.data);
-    console.log(e.data);
+
     if (data.type == "clientId") {
       state.clientId = data.value;
       state.roomId = roomIdFromInput.value;
