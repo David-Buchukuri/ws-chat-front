@@ -39,6 +39,9 @@ state.ws.onmessage = (e) => {
   if (data.type == "message") {
     messages.value.push(data.value);
   }
+  if (data.type == "join") {
+    messages.value.push(data.value + " joined the chat");
+  }
 };
 
 onBeforeRouteLeave(() => {
