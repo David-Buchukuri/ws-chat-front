@@ -66,6 +66,10 @@ state.ws.onmessage = (e) => {
     messages.value.push(data.value + " joined the chat");
   }
 
+  if (data.type == "leave") {
+    messages.value.push(data.value + " left the chat");
+  }
+
   if (data.type == "typing") {
     typingUser.value = data.value;
     typingUserTimeout ? clearTimeout(typingUserTimeout) : null;
