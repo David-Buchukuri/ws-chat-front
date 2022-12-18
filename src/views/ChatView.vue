@@ -6,8 +6,17 @@
       <h3 id="room-name"></h3>
       <div class="chat-box">
         <div class="message-box">
-          <div v-for="message in messages" :key="new Date()" class="message">
-            {{ message }}
+          <div
+            v-for="message in messages"
+            :key="new Date()"
+            :class="{
+              'my-message': message.isMine,
+              'guest-message': message.isMine === false,
+              message: message.isMine === true || message.isMine === false,
+              notification: message.isMine === null,
+            }"
+          >
+            {{ message.value }}
           </div>
           <div class="typing" v-if="typingUser">
             {{ typingUser }} is typing...
@@ -56,18 +65,21 @@ const sendTyping = () => {
 state.ws.onmessage = (e) => {
   const data = JSON.parse(e.data);
   if (data.type == "message") {
-    messages.value.push(data.value);
+    messages.value.push({ value: data.value, isMine: data.isMine });
     if (!data.isMine) {
       typingUser.value = false;
     }
   }
 
   if (data.type == "join") {
-    messages.value.push(data.value + " joined the chat");
+    messages.value.push({
+      value: data.value + " joined the chat",
+      isMine: null,
+    });
   }
 
   if (data.type == "leave") {
-    messages.value.push(data.value + " left the chat");
+    messages.value.push({ value: data.value + " left the chat", isMine: null });
   }
 
   if (data.type == "typing") {
@@ -119,11 +131,37 @@ onBeforeUnmount(() => {
   padding: 5px;
   display: flex;
   flex-direction: column;
+
+  gap: 5px;
 }
 
 .message {
   width: 100%;
   text-align: center;
+  inline-size: 220px;
+  overflow-wrap: break-word;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: rgb(153, 153, 241);
+  align-self: center;
+}
+.message {
+  width: 100%;
+  max-inline-size: 220px;
+  inline-size: auto;
+  overflow-wrap: break-word;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.notification {
+  width: 100%;
+  text-align: center;
+  inline-size: 250px;
+  overflow-wrap: break-word;
+  padding: 40px 5px 40px 5px;
+  font-style: italic;
+  align-self: center;
 }
 
 .typing {
@@ -156,5 +194,18 @@ button {
   align-items: center;
   flex-direction: column;
   gap: 50px;
+}
+
+.my-message {
+  text-align: right;
+  align-self: flex-end;
+  color: white;
+  background-color: rgb(117, 117, 226);
+}
+.guest-message {
+  text-align: left;
+  align-self: flex-start;
+  color: black;
+  background-color: rgb(197, 197, 197);
 }
 </style>
