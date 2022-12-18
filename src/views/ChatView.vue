@@ -73,23 +73,30 @@ state.ws.onmessage = (e) => {
   if (data.type == "typing") {
     typingUser.value = data.value;
     typingUserTimeout ? clearTimeout(typingUserTimeout) : null;
-    typingUserTimeout = setTimeout(() => (typingUser.value = false), 10000);
+    typingUserTimeout = setTimeout(() => (typingUser.value = false), 3000);
     console.log(data.value, " is typing");
   }
 };
 
 onBeforeRouteLeave(() => {
   const answer = window.confirm(
-    "Do you really want to leave? you have unsaved changes!"
+    "Do you really want to leave? your messages won't be persisted"
   );
   if (!answer) return false;
 });
+
+const confirmExit = (evt) => {
+  evt.returnValue = false;
+};
+
+window.addEventListener("beforeunload", confirmExit);
 
 onBeforeUnmount(() => {
   state.ws.close();
   state.ws = null;
   state.roomId = null;
   state.clientId = null;
+  window.removeEventListener("beforeunload", confirmExit);
 });
 </script>
 
