@@ -2,31 +2,28 @@
   <div class="parent">
     <h2>chat room id: {{ state.roomId }}</h2>
 
-    <div class="rooms">
-      <h3 id="room-name"></h3>
-      <div class="chat-box">
-        <div class="message-box">
-          <div
-            v-for="message in messages"
-            :key="new Date()"
-            :class="{
-              'my-message': message.isMine,
-              'guest-message': message.isMine === false,
-              message: message.isMine === true || message.isMine === false,
-              notification: message.isMine === null,
-            }"
-          >
-            {{ message.value }}
-          </div>
-          <div class="typing" v-if="typingUser">
-            {{ typingUser }} is typing...
-          </div>
+    <div class="chat-box">
+      <div class="message-box">
+        <div
+          v-for="message in messages"
+          :key="new Date()"
+          :class="{
+            'my-message': message.isMine,
+            'guest-message': message.isMine === false,
+            message: message.isMine === true || message.isMine === false,
+            notification: message.isMine === null,
+          }"
+        >
+          {{ message.value }}
         </div>
-        <div class="send-panel">
-          <input type="text" v-model="message" @input="sendTyping" />
-          <button @click="sendMessage" :disabled="!message">send</button>
+        <div class="typing" v-if="typingUser">
+          {{ typingUser }} is typing...
         </div>
       </div>
+      <form class="send-panel" @submit.prevent="sendMessage">
+        <input type="text" v-model="message" @input="sendTyping" />
+        <button :disabled="!message">send</button>
+      </form>
     </div>
   </div>
 </template>
@@ -50,6 +47,7 @@ const sendMessage = () => {
       roomId: state.roomId,
     })
   );
+  message.value = null;
 };
 
 const sendTyping = () => {
@@ -113,11 +111,21 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.parent {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  /* background-color: rgb(187, 187, 187); */
+  gap: 20px;
+}
+
 .chat-box {
   border: 1px solid black;
   border-radius: 10px;
-  height: 500px;
-  width: 300px;
+  height: 80%;
+  width: 80%;
   padding: 10px;
   margin-bottom: 10px;
   display: flex;
@@ -131,23 +139,12 @@ onBeforeUnmount(() => {
   padding: 5px;
   display: flex;
   flex-direction: column;
-
   gap: 5px;
 }
 
 .message {
   width: 100%;
-  text-align: center;
-  inline-size: 220px;
-  overflow-wrap: break-word;
-  padding: 5px;
-  border-radius: 5px;
-  background-color: rgb(153, 153, 241);
-  align-self: center;
-}
-.message {
-  width: 100%;
-  max-inline-size: 220px;
+  max-inline-size: 80%;
   inline-size: auto;
   overflow-wrap: break-word;
   padding: 5px;
@@ -157,9 +154,9 @@ onBeforeUnmount(() => {
 .notification {
   width: 100%;
   text-align: center;
-  inline-size: 250px;
+  inline-size: 95%;
   overflow-wrap: break-word;
-  padding: 40px 5px 40px 5px;
+  padding: 0px 5px 40px 5px;
   font-style: italic;
   align-self: center;
 }
@@ -186,14 +183,6 @@ input {
 
 button {
   padding: 5px;
-}
-
-.parent {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 50px;
 }
 
 .my-message {
