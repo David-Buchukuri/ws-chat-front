@@ -21,7 +21,17 @@
         </div>
       </div>
       <form class="send-panel" @submit.prevent="sendMessage">
-        <input type="text" v-model="message" @input="sendTyping" />
+        <input type="text" v-model="message" @input="sendTyping" ref="input" />
+        <EmojiPicker
+          v-if="emojiVisible"
+          class="emoji-popup"
+          :native="true"
+          @select="onSelectEmoji"
+          v-click-outside="emojiBlur"
+        />
+        <div class="emoji-popup-label" @click="emojiVisible = !emojiVisible">
+          😀️
+        </div>
         <button :disabled="!message">send</button>
       </form>
     </div>
@@ -32,11 +42,37 @@
 import { state } from "../stores/wsStore";
 import { ref, onBeforeUnmount } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
+import EmojiPicker from "vue3-emoji-picker";
+import "vue3-emoji-picker/css";
 
-const message = ref(null);
+const message = ref("");
 const messages = ref([]);
 const typingUser = ref(null);
+const emojiVisible = ref(false);
+const input = ref(null);
+
 let typingUserTimeout;
+
+const emojiBlur = () => {
+  emojiVisible.value = false;
+};
+
+const onSelectEmoji = (emoji) => {
+  let selectionStart = input.value.selectionStart;
+  let selectionEnd = input.value.selectionEnd;
+
+  let firstPart = message.value.substring(0, selectionStart);
+  let secondPart = message.value.substring(selectionEnd);
+
+  message.value = firstPart + emoji.i + secondPart;
+
+  const nextPosition = selectionStart + 2;
+
+  setTimeout(
+    () => input.value.setSelectionRange(nextPosition, nextPosition),
+    10
+  );
+};
 
 const sendMessage = () => {
   state.ws.send(
@@ -47,7 +83,7 @@ const sendMessage = () => {
       roomId: state.roomId,
     })
   );
-  message.value = null;
+  message.value = "";
 };
 
 const sendTyping = () => {
@@ -84,7 +120,6 @@ state.ws.onmessage = (e) => {
     typingUser.value = data.value;
     typingUserTimeout ? clearTimeout(typingUserTimeout) : null;
     typingUserTimeout = setTimeout(() => (typingUser.value = false), 3000);
-    console.log(data.value, " is typing");
   }
 };
 
@@ -111,13 +146,25 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.emoji-popup {
+  position: absolute;
+  right: 0;
+  margin-top: -450px;
+  height: 40vh;
+  min-height: 40vh;
+}
+
+.emoji-popup-label {
+  scale: 1.4;
+  cursor: pointer;
+}
+
 .parent {
   display: flex;
   height: 100vh;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  /* background-color: rgb(187, 187, 187); */
   gap: 20px;
 }
 
@@ -173,11 +220,11 @@ onBeforeUnmount(() => {
   align-items: center;
   height: 20%;
   gap: 10px;
+  position: relative;
 }
 
 input {
   padding: 5px;
-  outline: none;
   flex-grow: 1;
 }
 
