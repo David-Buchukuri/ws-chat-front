@@ -3,23 +3,8 @@
     <h2>chat room id: {{ state.roomId }}</h2>
 
     <div class="chat-box">
-      <div class="message-box">
-        <div
-          v-for="message in messages"
-          :key="new Date()"
-          :class="{
-            'my-message': message.isMine,
-            'guest-message': message.isMine === false,
-            message: message.isMine === true || message.isMine === false,
-            notification: message.isMine === null,
-          }"
-        >
-          {{ message.value }}
-        </div>
-        <div class="typing" v-if="typingUser">
-          {{ typingUser }} is typing...
-        </div>
-      </div>
+      <MessageBox :messages="messages" :typingUser="typingUser" />
+
       <form class="send-panel" @submit.prevent="sendMessage">
         <input type="text" v-model="message" @input="sendTyping" ref="input" />
         <EmojiPicker
@@ -44,6 +29,7 @@ import { ref, onBeforeUnmount } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
+import MessageBox from "@/components/MessageBox.vue";
 
 const message = ref("");
 const messages = ref([]);
@@ -99,9 +85,14 @@ const sendTyping = () => {
 state.ws.onmessage = (e) => {
   const data = JSON.parse(e.data);
   if (data.type == "message") {
-    messages.value.push({ value: data.value, isMine: data.isMine });
+    messages.value.push({
+      value: data.value,
+      isMine: data.isMine,
+      pfp: data.pfp,
+    });
+    console.log(messages.value);
     if (!data.isMine) {
-      typingUser.value = false;
+      typingUser.value = null;
     }
   }
 
@@ -177,40 +168,6 @@ onBeforeUnmount(() => {
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-}
-.message-box {
-  background-color: antiquewhite;
-  height: 80%;
-  overflow: auto;
-  padding: 5px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.message {
-  width: 100%;
-  max-inline-size: 80%;
-  inline-size: auto;
-  overflow-wrap: break-word;
-  padding: 5px;
-  border-radius: 5px;
-}
-
-.notification {
-  width: 100%;
-  text-align: center;
-  inline-size: 95%;
-  overflow-wrap: break-word;
-  padding: 0px 5px 40px 5px;
-  font-style: italic;
-  align-self: center;
-}
-
-.typing {
-  text-align: left;
-  margin-top: auto;
 }
 
 .send-panel {
@@ -230,18 +187,5 @@ input {
 
 button {
   padding: 5px;
-}
-
-.my-message {
-  text-align: right;
-  align-self: flex-end;
-  color: white;
-  background-color: rgb(117, 117, 226);
-}
-.guest-message {
-  text-align: left;
-  align-self: flex-start;
-  color: black;
-  background-color: rgb(197, 197, 197);
 }
 </style>
