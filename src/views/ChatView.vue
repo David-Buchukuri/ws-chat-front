@@ -25,7 +25,7 @@
 
 <script setup>
 import { state } from "../stores/wsStore";
-import { ref, onBeforeUnmount } from "vue";
+import { ref, onBeforeUnmount, provide } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
@@ -33,11 +33,12 @@ import MessageBox from "@/components/MessageBox.vue";
 
 const message = ref("");
 const messages = ref([]);
-const typingUser = ref(null);
+const typingUser = ref(false);
+let typingUserTimeout;
 const emojiVisible = ref(false);
 const input = ref(null);
 
-let typingUserTimeout;
+provide("typingUser", typingUser);
 
 const emojiBlur = () => {
   emojiVisible.value = false;
@@ -90,9 +91,8 @@ state.ws.onmessage = (e) => {
       isMine: data.isMine,
       pfp: data.pfp,
     });
-    console.log(messages.value);
     if (!data.isMine) {
-      typingUser.value = null;
+      typingUser.value = false;
     }
   }
 

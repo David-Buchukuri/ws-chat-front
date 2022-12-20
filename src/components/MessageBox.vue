@@ -1,5 +1,5 @@
 <template>
-  <div class="message-box">
+  <div ref="messageBox" class="message-box">
     <div
       v-for="message in messages"
       :key="new Date()"
@@ -30,9 +30,24 @@
 
 <script setup>
 import ProfilePicture from "./ProfilePicture.vue";
+import { ref, watch, onMounted, watchEffect } from "vue";
+import { inject } from "vue";
+import useScrollToBottomIfClose from "@/composables/useScrollToBottomIfClose.js";
+
 const props = defineProps({
   messages: Array,
-  typingUser: String | Boolean,
+});
+
+const typingUser = inject("typingUser");
+
+const messageBox = ref(null);
+
+watch(props.messages, () => {
+  useScrollToBottomIfClose(messageBox);
+});
+
+watch(typingUser, () => {
+  useScrollToBottomIfClose(messageBox);
 });
 </script>
 
@@ -45,6 +60,7 @@ const props = defineProps({
   display: flex;
   flex-direction: column;
   gap: 5px;
+  scroll-behavior: smooth;
 }
 
 .message {
