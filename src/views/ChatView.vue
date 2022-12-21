@@ -89,7 +89,7 @@ state.ws.onmessage = (e) => {
     messages.value.push({
       value: data.value,
       isMine: data.isMine,
-      pfp: data.pfp,
+      pfp: data.pfp ?? "http://localhost:8005/default",
     });
     if (!data.isMine) {
       typingUser.value = false;
