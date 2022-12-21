@@ -5,12 +5,17 @@
       :key="new Date()"
       :class="{
         'my-message': message.isMine,
-        'guest-message': message.isMine === false,
-        message: message.isMine === true || message.isMine === false,
-        notification: message.isMine === null,
+        'guest-message': message.type === 'message' && !message.isMine,
+        message: message.type === 'message',
+        notification: message.type === 'notification',
       }"
     >
       <ProfilePicture v-if="message.isMine === false" :url="message.pfp" />
+      <p v-if="message.type === 'message'">
+        {{
+          clientsOnline.indexOf(message.nickname) !== -1 ? "online" : "offline"
+        }}
+      </p>
       <div
         class="message-text"
         :class="{
@@ -24,7 +29,9 @@
       <ProfilePicture v-if="message.isMine" :url="message.pfp" />
     </div>
 
-    <div class="typing" v-if="typingUser">{{ typingUser }} is typing...</div>
+    <div class="typing" v-if="typingUser">
+      {{ typingUser.substring(41) }} is typing...
+    </div>
   </div>
 </template>
 
@@ -36,6 +43,7 @@ import useScrollToBottomIfClose from "@/composables/useScrollToBottomIfClose.js"
 
 const props = defineProps({
   messages: Array,
+  clientsOnline: Array,
 });
 
 const typingUser = inject("typingUser");

@@ -3,7 +3,11 @@
     <h2>chat room id: {{ state.roomId }}</h2>
 
     <div class="chat-box">
-      <MessageBox :messages="messages" :typingUser="typingUser" />
+      <MessageBox
+        :messages="messages"
+        :typingUser="typingUser"
+        :clientsOnline="clientsOnline"
+      />
 
       <form class="send-panel" @submit.prevent="sendMessage">
         <input type="text" v-model="message" @input="sendTyping" ref="input" />
@@ -37,6 +41,7 @@ const typingUser = ref(false);
 let typingUserTimeout;
 const emojiVisible = ref(false);
 const input = ref(null);
+const clientsOnline = ref([]);
 
 provide("typingUser", typingUser);
 
@@ -90,6 +95,8 @@ state.ws.onmessage = (e) => {
       value: data.value,
       isMine: data.isMine,
       pfp: data.pfp ?? "http://localhost:8005/default",
+      nickname: data.nickname,
+      type: "message",
     });
     if (!data.isMine) {
       typingUser.value = false;
@@ -98,13 +105,21 @@ state.ws.onmessage = (e) => {
 
   if (data.type == "join") {
     messages.value.push({
-      value: data.value + " joined the chat",
+      value: data.value.substring(41) + " joined the chat",
       isMine: null,
+      type: "notification",
     });
+    clientsOnline.value = data.onlineClients;
   }
 
   if (data.type == "leave") {
-    messages.value.push({ value: data.value + " left the chat", isMine: null });
+    messages.value.push({
+      value: data.value.substring(41) + " left the chat",
+      isMine: null,
+      type: "notification",
+    });
+
+    clientsOnline.value = data.onlineClients;
   }
 
   if (data.type == "typing") {
