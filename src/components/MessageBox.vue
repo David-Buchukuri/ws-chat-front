@@ -10,12 +10,12 @@
         notification: message.type === 'notification',
       }"
     >
-      <ProfilePicture v-if="message.isMine === false" :url="message.pfp" />
-      <p v-if="message.type === 'message'">
-        {{
-          clientsOnline.indexOf(message.nickname) !== -1 ? "online" : "offline"
-        }}
-      </p>
+      <ProfilePicture
+        v-if="message.isMine === false"
+        :url="message.pfp"
+        :online="clientsOnline.indexOf(message.nickname) !== -1 ? true : false"
+      />
+
       <div
         class="message-text"
         :class="{
@@ -26,7 +26,11 @@
       >
         {{ message.value }}
       </div>
-      <ProfilePicture v-if="message.isMine" :url="message.pfp" />
+      <ProfilePicture
+        v-if="message.isMine"
+        :url="message.pfp"
+        :online="clientsOnline.indexOf(message.nickname) !== -1 ? true : false"
+      />
     </div>
 
     <div class="typing" v-if="typingUser">
