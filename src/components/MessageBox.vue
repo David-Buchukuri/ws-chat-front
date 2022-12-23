@@ -1,6 +1,10 @@
 <template>
   <div ref="messageBox" class="message-box">
-    <!-- <div v-if="showNewMessageNotification">see new messages below</div> -->
+    <NewMessageNotification
+      v-if="showNewMessageNotification"
+      :elementToScroll="messageBox"
+    />
+
     <div
       v-for="message in messages"
       :key="new Date()"
@@ -42,9 +46,11 @@
 
 <script setup>
 import ProfilePicture from "./ProfilePicture.vue";
+import NewMessageNotification from "./NewMessageNotification.vue";
 import { ref, watch, onMounted } from "vue";
 import { inject } from "vue";
 import useScrollToBottomIfClose from "@/composables/useScrollToBottomIfClose.js";
+import useShowNewMessageNotification from "@/composables/useShowNewMessageNotification.js";
 
 const props = defineProps({
   messages: Array,
@@ -55,10 +61,12 @@ const typingUser = inject("typingUser");
 
 const messageBox = ref(null);
 
-onMounted(() => {
-  useScrollToBottomIfClose(messageBox, props.messages);
-  useScrollToBottomIfClose(messageBox, typingUser);
-});
+useScrollToBottomIfClose(messageBox, props.messages);
+useScrollToBottomIfClose(messageBox, typingUser);
+const showNewMessageNotification = useShowNewMessageNotification(
+  messageBox,
+  props.messages
+);
 </script>
 
 <style>
