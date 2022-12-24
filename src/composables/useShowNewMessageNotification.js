@@ -1,9 +1,12 @@
-import { watch, ref, onMounted } from "vue";
+import { watch, ref, onMounted, onBeforeUnmount } from "vue";
 
 const useShowNewMessageNotification = (element, state) => {
   const showNotification = ref(false);
+
+  let scrollEventListener;
+
   onMounted(() => {
-    element.value.addEventListener("scroll", () => {
+    scrollEventListener = element.value.addEventListener("scroll", () => {
       let realHeight = element.value.scrollHeight;
       let distanceFromTop = element.value.scrollTop;
       let chatHeight = element.value.offsetHeight;
@@ -22,6 +25,10 @@ const useShowNewMessageNotification = (element, state) => {
         showNotification.value = true;
       }
     });
+  });
+
+  onBeforeUnmount(() => {
+    element.value.removeEventListener("scroll", scrollEventListener);
   });
 
   return showNotification;
