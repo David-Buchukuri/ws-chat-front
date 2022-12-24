@@ -14,7 +14,7 @@
           />
         </div>
       </div>
-      <div class="d-flex-col-gap">
+      <form @submit.prevent="joinChat" class="d-flex-col-gap">
         <h3>Already Have A Code?</h3>
         <h3>Join The Room!</h3>
 
@@ -27,8 +27,8 @@
         <span v-if="error" class="error"
           >room id is invalid or the room is full
         </span>
-        <button @click="joinChat" :disabled="!roomIdFromInput">Join</button>
-      </div>
+        <button :disabled="!roomIdFromInput">Join</button>
+      </form>
     </section>
   </main>
 </template>
