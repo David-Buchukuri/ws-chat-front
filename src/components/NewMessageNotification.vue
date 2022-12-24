@@ -22,9 +22,11 @@ const scrollToBottom = () => {
   color: white;
   font-weight: 600;
   position: absolute;
-  margin-top: 50vh;
-  margin-left: 50vw;
-  transform: translateX(-100%);
+
+  margin-left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  margin-bottom: 10px;
   cursor: pointer;
 }
 </style>

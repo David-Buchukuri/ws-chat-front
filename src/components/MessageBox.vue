@@ -1,45 +1,52 @@
 <template>
-  <div ref="messageBox" class="message-box">
-    <NewMessageNotification
-      v-if="showNewMessageNotification"
-      :elementToScroll="messageBox"
-    />
-
-    <div
-      v-for="message in messages"
-      :key="new Date()"
-      :class="{
-        'my-message': message.isMine,
-        'guest-message': message.type === 'message' && !message.isMine,
-        message: message.type === 'message',
-        notification: message.type === 'notification',
-      }"
-    >
-      <ProfilePicture
-        v-if="message.isMine === false"
-        :url="message.pfp"
-        :online="clientsOnline.indexOf(message.nickname) !== -1 ? true : false"
+  <div class="parent">
+    <div ref="messageBox" class="message-box">
+      <NewMessageNotification
+        v-if="showNewMessageNotification"
+        :elementToScroll="messageBox"
       />
 
       <div
-        class="message-text"
+        v-for="message in messages"
+        :key="new Date()"
         :class="{
-          'my-message-text': message.isMine,
-          'guest-message-text': message.isMine === false,
-          'notification-message-text': message.isMine === null,
+          'my-message': message.isMine,
+          'guest-message': message.type === 'message' && !message.isMine,
+          message: message.type === 'message',
+          notification: message.type === 'notification',
         }"
       >
-        {{ message.value }}
-      </div>
-      <ProfilePicture
-        v-if="message.isMine"
-        :url="message.pfp"
-        :online="clientsOnline.indexOf(message.nickname) !== -1 ? true : false"
-      />
-    </div>
+        <ProfilePicture
+          v-if="message.isMine === false"
+          :url="message.pfp"
+          :online="
+            clientsOnline.indexOf(message.nickname) !== -1 ? true : false
+          "
+        />
 
-    <div class="typing" v-if="typingUser">
-      {{ typingUser.substring(41) }} is typing...
+        <div
+          class="message-text"
+          :class="{
+            'my-message-text': message.isMine,
+            'guest-message-text': message.isMine === false,
+            'notification-message-text': message.isMine === null,
+          }"
+        >
+          {{ message.value }}
+        </div>
+        <ProfilePicture
+          v-if="message.isMine"
+          :url="message.pfp"
+          :online="
+            clientsOnline.indexOf(message.nickname) !== -1 ? true : false
+          "
+        />
+      </div>
+
+      <div class="typing" v-if="typingUser">
+        <p>{{ typingUser.substring(41) }}</p>
+        <TypingAnimation />
+      </div>
     </div>
   </div>
 </template>
@@ -47,6 +54,7 @@
 <script setup>
 import ProfilePicture from "./ProfilePicture.vue";
 import NewMessageNotification from "./NewMessageNotification.vue";
+import TypingAnimation from "./TypingAnimation.vue";
 import { ref, watch, onMounted } from "vue";
 import { inject } from "vue";
 import useScrollToBottomIfClose from "@/composables/useScrollToBottomIfClose.js";
@@ -70,6 +78,11 @@ const showNewMessageNotification = useShowNewMessageNotification(
 </script>
 
 <style>
+.parent {
+  overflow: hidden;
+  position: relative;
+}
+
 .message-box {
   background-color: antiquewhite;
   height: 80%;
@@ -79,6 +92,8 @@ const showNewMessageNotification = useShowNewMessageNotification(
   flex-direction: column;
   gap: 5px;
   scroll-behavior: smooth;
+  width: 100%;
+  height: 100%;
 }
 
 .message {
@@ -133,5 +148,12 @@ const showNewMessageNotification = useShowNewMessageNotification(
 .typing {
   text-align: left;
   margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.typing-user-pfp {
+  scale: 0.7;
 }
 </style>
