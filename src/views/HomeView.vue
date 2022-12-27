@@ -1,6 +1,6 @@
 <template>
   <main>
-    <h1>anonymous chat</h1>
+    <h1>anonymous one on one chat</h1>
     <section>
       <div class="d-flex-col-gap">
         <h3>Create Your Own Chat Room</h3>
