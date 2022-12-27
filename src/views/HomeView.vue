@@ -53,14 +53,16 @@ const copyRoomId = () => {
 };
 
 const createRoom = async () => {
-  const responsePromise = await fetch("http://127.0.0.1:8005/create-room");
+  const responsePromise = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/create-room`
+  );
   const response = await responsePromise.json();
   roomIdFromResponse.value = response.roomId;
 };
 
 const joinChat = () => {
   const ws = new WebSocket(
-    `ws://127.0.0.1:8005?roomId=${roomIdFromInput.value}`
+    `${import.meta.env.VITE_BACKEND_WS_URL}/?roomId=${roomIdFromInput.value}`
   );
   ws.onerror = function (err) {
     error.value = true;

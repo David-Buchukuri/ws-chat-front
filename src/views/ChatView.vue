@@ -1,6 +1,6 @@
 <template>
   <div class="parent">
-    <h2>chat room id: {{ state.roomId }}</h2>
+    <h2 class="room-id">chat room id: {{ state.roomId }}</h2>
 
     <div class="chat-box">
       <MessageBox
@@ -94,7 +94,7 @@ state.ws.onmessage = (e) => {
     messages.value.push({
       value: data.value,
       isMine: data.isMine,
-      pfp: data.pfp ?? "http://localhost:8005/default",
+      pfp: data.pfp ?? `${import.meta.env.VITE_BACKEND_URL}/default`,
       nickname: data.nickname,
       type: "message",
     });
@@ -202,5 +202,12 @@ input {
 
 button {
   padding: 5px;
+}
+
+.room-id {
+  font-size: 20px;
+  text-align: center;
+  word-break: break-all;
+  max-width: 80%;
 }
 </style>

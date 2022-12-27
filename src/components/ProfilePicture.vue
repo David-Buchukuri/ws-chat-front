@@ -21,6 +21,8 @@ img {
 
 .parent {
   position: relative;
+  max-height: 60px;
+  flex-shrink: 0;
 }
 
 .online {
