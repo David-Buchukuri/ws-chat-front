@@ -11,7 +11,7 @@ const useShowNewMessageNotification = (element, state) => {
       let distanceFromTop = element.value.scrollTop;
       let chatHeight = element.value.offsetHeight;
 
-      if (distanceFromTop == realHeight - chatHeight) {
+      if (distanceFromTop == realHeight - chatHeight - 25) {
         showNotification.value = false;
       }
     });
