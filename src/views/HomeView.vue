@@ -27,7 +27,7 @@
         <span v-if="error" class="error"
           >room id is invalid or the room is full
         </span>
-        <button :disabled="!roomIdFromInput">Join</button>
+        <button :disabled="!roomIdFromInput || loading">Join</button>
       </form>
     </section>
   </main>
@@ -41,8 +41,6 @@ import CopyIcon from "@/components/icons/CopyIcon.vue";
 
 const router = useRouter();
 
-const error = ref(false);
-const roomIdFromInput = ref(null);
 const roomIdFromResponse = ref(null);
 const copyIconColor = ref("black");
 
@@ -60,12 +58,19 @@ const createRoom = async () => {
   roomIdFromResponse.value = response.roomId;
 };
 
+const error = ref(false);
+const roomIdFromInput = ref(null);
+const loading = ref(false);
+
 const joinChat = () => {
+  loading.value = true;
+
   const ws = new WebSocket(
     `${import.meta.env.VITE_BACKEND_WS_URL}/?roomId=${roomIdFromInput.value}`
   );
   ws.onerror = function (err) {
     error.value = true;
+    loading.value = false;
   };
 
   ws.onmessage = (e) => {
@@ -75,6 +80,7 @@ const joinChat = () => {
       state.clientId = data.value;
       state.roomId = roomIdFromInput.value;
       state.ws = ws;
+      loading.value = false;
       router.push("/chat");
     }
   };

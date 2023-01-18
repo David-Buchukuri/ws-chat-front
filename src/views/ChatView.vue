@@ -35,15 +35,8 @@ import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
 import MessageBox from "@/components/MessageBox.vue";
 
-const message = ref("");
-const messages = ref([]);
-const typingUser = ref(false);
-let typingUserTimeout;
 const emojiVisible = ref(false);
 const input = ref(null);
-const clientsOnline = ref([]);
-
-provide("typingUser", typingUser);
 
 const emojiBlur = () => {
   emojiVisible.value = false;
@@ -65,6 +58,8 @@ const onSelectEmoji = (emoji) => {
     10
   );
 };
+
+const message = ref("");
 
 const sendMessage = () => {
   state.ws.send(
@@ -88,8 +83,23 @@ const sendTyping = () => {
   );
 };
 
+const messages = ref([]);
+
+const typingUser = ref(false);
+provide("typingUser", typingUser);
+let typingUserTimeout;
+
+const clientsOnline = ref([]);
+
 state.ws.onmessage = (e) => {
   const data = JSON.parse(e.data);
+
+  if (data.type == "typing") {
+    typingUser.value = data.value;
+    typingUserTimeout ? clearTimeout(typingUserTimeout) : null;
+    typingUserTimeout = setTimeout(() => (typingUser.value = false), 3000);
+  }
+
   if (data.type == "message") {
     messages.value.push({
       value: data.value,
@@ -120,12 +130,6 @@ state.ws.onmessage = (e) => {
     });
 
     clientsOnline.value = data.onlineClients;
-  }
-
-  if (data.type == "typing") {
-    typingUser.value = data.value;
-    typingUserTimeout ? clearTimeout(typingUserTimeout) : null;
-    typingUserTimeout = setTimeout(() => (typingUser.value = false), 3000);
   }
 };
 

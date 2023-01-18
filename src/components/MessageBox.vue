@@ -55,7 +55,7 @@
 import ProfilePicture from "./ProfilePicture.vue";
 import NewMessageNotification from "./NewMessageNotification.vue";
 import TypingAnimation from "./TypingAnimation.vue";
-import { ref, watch, onMounted } from "vue";
+import { ref } from "vue";
 import { inject } from "vue";
 import useScrollToBottomIfClose from "@/composables/useScrollToBottomIfClose.js";
 import useShowNewMessageNotification from "@/composables/useShowNewMessageNotification.js";
@@ -71,6 +71,7 @@ const messageBox = ref(null);
 
 useScrollToBottomIfClose(messageBox, props.messages);
 useScrollToBottomIfClose(messageBox, typingUser);
+
 const showNewMessageNotification = useShowNewMessageNotification(
   messageBox,
   props.messages
